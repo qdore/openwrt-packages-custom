@@ -1,0 +1,47 @@
+From 42c03cf17282e8bd66191c5906b69620fd0639aa Mon Sep 17 00:00:00 2001
+From: Alexander Egorenkov <egorenar-dev@posteo.net>
+Date: Sat, 17 Apr 2021 18:39:55 +0200
+Subject: [PATCH 1/1] tests: Fix AES-CBC OpenSSL tests if length is a multiple
+ of block size
+
+OpenSSL uses PKCS#7 padding for AES-CBC that adds an extra pad block
+in case the input length is a multiple of block site.
+Disable PKCS#7 padding in that case.
+
+Signed-off-by: Alexander Egorenkov <egorenar-dev@posteo.net>
+---
+ test/kcapi-enc-test.sh | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/test/kcapi-enc-test.sh b/test/kcapi-enc-test.sh
+index 3798dee..de33b85 100755
+--- a/test/kcapi-enc-test.sh
++++ b/test/kcapi-enc-test.sh
+@@ -253,18 +253,20 @@ test_filein_fileout()
+ 
+ 	diff_file $ORIGPT $GENPT "FILEIN / FILEOUT enc test ($keysize bits)"
+ 
+-	# FIXME: error in openssl?
+ 	local ptsize=$(stat -c %s $ORIGPT)
+ 	local fullblock=$((ptsize%16))
++	local extra_openssl_opts=""
+ 
+ 	if [ $fullblock -eq 0 ]
+ 	then
+-		return
++		# OpenSSL uses PKCS#7 padding which adds an extra pad block in this case
++		# Disable PKCS#7 padding when input length is a multiple of block size
++		extra_openssl_opts="$extra_openssl_opts -nopad"
+ 	fi
+ 
+ 	eval opensslkey=\$OPENSSLKEY${keysize}
+-	openssl enc -aes-$keysize-cbc -in $ORIGPT -out $GENCT.openssl -K $opensslkey -iv $IV
+-	openssl enc -d -aes-$keysize-cbc -in $GENCT -out $GENPT.openssl -K $opensslkey -iv $IV
++	openssl enc -aes-$keysize-cbc -in $ORIGPT -out $GENCT.openssl -K $opensslkey -iv $IV $extra_openssl_opts
++	openssl enc -d -aes-$keysize-cbc -in $GENCT -out $GENPT.openssl -K $opensslkey -iv $IV $extra_openssl_opts
+ 
+ 	diff_file $GENCT $GENCT.openssl "FILEIN / FILEOUT enc test ($keysize bits) (openssl generated CT)"
+ 	diff_file $GENPT $GENPT.openssl "FILEIN / FILEOUT enc test ($keysize bits) (openssl generated PT)"
+-- 
+2.31.1
+
