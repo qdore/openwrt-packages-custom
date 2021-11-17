@@ -8,12 +8,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gocryptfs
-PKG_VERSION:=2.1
+PKG_VERSION:=2.2.1
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/rfjakob/$(PKG_NAME)/archive/v$(PKG_VERSION)
-PKG_HASH:=3556524579e10806a15404bb7879001bf66270eacf44ed460ffe4e0c5bf6d17e
+PKG_HASH:=b8459db4b62c8cec311a957bb808a44d9626b4fda219bd9098b1ebefb8d6f00b
 
 PKG_MAINTAINER:=Alexander Egorenkov <egorenar-dev@posteo.net>
 PKG_LICENSE:=MIT
@@ -23,8 +23,8 @@ PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 
-GO_PKG:=github.com/rfjakob/gocryptfs
-GO_PKG_BUILD_PKG:=github.com/rfjakob/gocryptfs
+GO_PKG:=github.com/rfjakob/gocryptfs/v2
+GO_PKG_BUILD_PKG:=github.com/rfjakob/gocryptfs/v2
 
 GO_PKG_LDFLAGS_X:= \
 	main.GitVersion=$(PKG_VERSION) \
