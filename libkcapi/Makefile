@@ -52,7 +52,7 @@ define Package/libkcapi
   CATEGORY:=Libraries
   TITLE:=Linux Kernel Crypto API userspace interface library
   DEPENDS:=
-  URL:=https://www.chronox.de/libkcapi
+  URL:=https://www.chronox.de/libkcapi.html
 endef
 
 define Package/libkcapi/description
